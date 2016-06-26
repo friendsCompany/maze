@@ -10,7 +10,8 @@ import java.util.TimerTask;
 
 
 public class Interference {
-    private int sizeOfRect = 10;
+    private int sizeOfRect = 1;
+    private int speedOfInter = 10;
 
     public void initInterference(){
         new Frame();
@@ -29,7 +30,7 @@ public class Interference {
 
     public class Panel extends JPanel implements ActionListener{
         Graphics2D g2;
-        Timer timer = new Timer(10,this);
+        Timer timer = new Timer(speedOfInter,this);
 
         public Panel(){
             timer.start();
@@ -38,18 +39,13 @@ public class Interference {
         public void paint(Graphics g){
             g2 = (Graphics2D) g;
 
+            for (int i = 0; i < 300/sizeOfRect; i++) {
+                for (int j = 0; j < 300; j++) {
+                    g2.setColor(new Color(new Random().nextInt(255), new Random().nextInt(255), new Random().nextInt(255)));
 
-                    for (int i = 0; i < 300; i++) {
-                        for (int j = 0; j < 300; j++) {
-                            g2.setColor(new Color(new Random().nextInt(255), new Random().nextInt(255), new Random().nextInt(255)));
-
-                            g2.fillRect(j * 1, i * 1, 1, 1);
-
-
-                        }
-                    }
-
-
+                    g2.fillRect(j * sizeOfRect, i * sizeOfRect, sizeOfRect, sizeOfRect);
+                }
+            }
         }
 
         @Override

@@ -41,14 +41,10 @@ class MenuPanel extends JPanel{
         start.addActionListener(new StartAction());
     }
 
-    private class StartAction implements ActionListener {//реализуем интерфейс отвечающий за события
+    private class StartAction implements ActionListener {
 
-
-        public void actionPerformed(ActionEvent event) {//реакция на нажатие кнопки-смена цвета панели
+        public void actionPerformed(ActionEvent event) {
             new Interference().initInterference();
         }
-
     }
-
-
 }

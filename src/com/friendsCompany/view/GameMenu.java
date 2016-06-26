@@ -6,9 +6,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-/**
- * Created by Коля on 24.06.2016.
- */
+
 public class GameMenu {
     public void initMenu(){
         new MenuFrame();
@@ -19,7 +17,8 @@ class MenuFrame extends JFrame{
     public MenuFrame(){
         setTitle("Menu");
         setLocation(500, 300);
-        setSize(397, 93);
+        setSize(387, 83);
+        setResizable(false);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         MenuPanel menuPanel = new MenuPanel();
         menuPanel.setLayout(null);

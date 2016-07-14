@@ -4,21 +4,24 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.Date;
 import java.util.Random;
-import java.util.TimerTask;
 
 
 public class Interference {
     private int sizeOfRect = 1;
     private int speedOfInter = 10;
 
-    public void initInterference(){
-        new Frame();
+    public Interference(int sizeOfRect){
+        this.sizeOfRect = sizeOfRect;
+        initInterference();
     }
 
-    public class Frame extends JFrame {
-        public Frame(){
+    public void initInterference(){
+        new IntFrame();
+    }
+
+    public class IntFrame extends JFrame {
+        public IntFrame(){
             setTitle("GameFrame");
             setSize(300, 300);
             setLocation(100, 100);
@@ -42,7 +45,6 @@ public class Interference {
             for (int i = 0; i < 300/sizeOfRect; i++) {
                 for (int j = 0; j < 300; j++) {
                     g2.setColor(new Color(new Random().nextInt(255), new Random().nextInt(255), new Random().nextInt(255)));
-
                     g2.fillRect(j * sizeOfRect, i * sizeOfRect, sizeOfRect, sizeOfRect);
                 }
             }

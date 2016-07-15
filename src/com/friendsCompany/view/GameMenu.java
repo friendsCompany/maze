@@ -1,5 +1,8 @@
 package com.friendsCompany.view;
 
+import com.friendsCompany.models.PlayerSphere;
+import com.sun.j3d.utils.applet.MainFrame;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -17,7 +20,7 @@ class MenuFrame extends JFrame{
     public MenuFrame(){
         setTitle("Menu");
         setLocation(500, 300);
-        setSize(387, 103);
+        setSize(387, 155);
         setResizable(false);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         MenuPanel menuPanel = new MenuPanel();
@@ -32,6 +35,7 @@ class MenuPanel extends JPanel{
     JButton start = new JButton("Start");
     JButton exit = new JButton("Exit");
     JButton setSize = new JButton("Set Size");
+    JButton player = new JButton("Player");
     JTextField textField = new JTextField();
     private int sizeOfRect = 1;
 
@@ -44,15 +48,19 @@ class MenuPanel extends JPanel{
         exit.setBounds(191, 0, 190, 55);
         add(exit);
 
-        textField.setBounds(0,56,190,20);
+        textField.setBounds(0, 56, 190, 20);
         add(textField);
 
-        setSize.setBounds(191,56,190,20);
+        setSize.setBounds(191, 56, 190, 20);
         add(setSize);
+
+        player.setBounds(0, 77, 381, 50);
+        add(player);
 
         start.addActionListener(new StartAction());
         setSize.addActionListener(new SetSizeAction());
         exit.addActionListener(new ExitAction());
+        player.addActionListener(new PlayerAction());
 
     }
 
@@ -67,6 +75,17 @@ class MenuPanel extends JPanel{
 
         public void actionPerformed(ActionEvent event) {
             System.exit(0);
+        }
+    }
+
+    private class PlayerAction implements ActionListener {
+
+        public void actionPerformed(ActionEvent event) {
+            PlayerSphere playerSphere = new PlayerSphere();
+            MainFrame mainFrame = new MainFrame(playerSphere,400,400);
+            mainFrame.setTitle("Player");
+            mainFrame.setLocation(300,200);
+            mainFrame.setResizable(false);
         }
     }
 

@@ -81,11 +81,7 @@ class MenuPanel extends JPanel{
     private class PlayerAction implements ActionListener {
 
         public void actionPerformed(ActionEvent event) {
-            PlayerSphere playerSphere = new PlayerSphere();
-            MainFrame mainFrame = new MainFrame(playerSphere,400,400);
-            mainFrame.setTitle("Player");
-            mainFrame.setLocation(300,200);
-            mainFrame.setResizable(false);
+            PlayerSphere.initPlayer();
         }
     }
 

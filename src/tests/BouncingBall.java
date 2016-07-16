@@ -1,24 +1,27 @@
-package com.friendsCompany.models;
+package tests;
+
+
+import java.applet.Applet;
+
+import java.awt.*;
+
+import java.awt.event.*;
 
 import com.sun.j3d.utils.applet.MainFrame;
+
 import com.sun.j3d.utils.geometry.Primitive;
-import com.sun.j3d.utils.geometry.Sphere;
 import com.sun.j3d.utils.image.TextureLoader;
-import com.sun.j3d.utils.universe.SimpleUniverse;
+import com.sun.j3d.utils.universe.*;
 
 import javax.media.j3d.*;
+
 import javax.swing.*;
-import javax.vecmath.Color3f;
-import javax.vecmath.Color4f;
-import javax.vecmath.Point3d;
-import javax.vecmath.Vector3f;
-import java.applet.Applet;
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import javax.vecmath.*;
+
+import com.sun.j3d.utils.geometry.Sphere;
 
 
-public class PlayerSphere extends Applet implements ActionListener {
+public class BouncingBall extends Applet implements ActionListener {
 
     private TransformGroup objTrans;
 
@@ -50,51 +53,9 @@ public class PlayerSphere extends Applet implements ActionListener {
 
         objRoot.addChild(objTrans);
 
-        Color3f black = new Color3f(0.0f, 0.0f, 0.0f);
-
-        Color3f red = new Color3f(0.7f, .15f, .15f);
-
-        // Set up the texture map
-
-        TextureLoader loader = new TextureLoader("res/images/Arizona.jpg","LUMINANCE", new Container());
-
-        Texture texture = loader.getTexture();
-
-        texture.setBoundaryModeS(Texture.WRAP);
-
-        texture.setBoundaryModeT(Texture.WRAP);
-
-        texture.setBoundaryColor( new Color4f( 0.0f, 1.0f, 0.0f, 0.0f ) );
-
-
-
-        // Set up the texture attributes
-
-        //could be REPLACE, BLEND or DECAL instead of MODULATE
-
-        TextureAttributes texAttr = new TextureAttributes();
-
-        texAttr.setTextureMode(TextureAttributes.MODULATE);
-
-        Appearance ap = new Appearance();
-
-        ap.setTexture(texture);
-
-        ap.setTextureAttributes(texAttr);
-
-        //set up the material
-
-        ap.setMaterial(new Material(red, black, red, black, 1.0f));
-
-
-
-        // Create a ball to demonstrate textures
-
-        int primflags = Primitive.GENERATE_NORMALS + Primitive.GENERATE_TEXTURE_COORDS;
-
         // Create a simple shape leaf node, add it to the scene graph.
 
-        Sphere sphere = new Sphere(0.25f, primflags, ap);
+        Sphere sphere = new Sphere(0.25f);
 
         objTrans = new TransformGroup();
 
@@ -136,7 +97,7 @@ public class PlayerSphere extends Applet implements ActionListener {
 
     }
 
-    public PlayerSphere() {
+    public BouncingBall() {
 
         setLayout(new BorderLayout());
 
@@ -167,41 +128,37 @@ public class PlayerSphere extends Applet implements ActionListener {
 
     public void actionPerformed(ActionEvent e ) {
 
-//            height += 0.1 * sign;
-//
-//            if (Math.abs(height *2) >= 1 ) sign = -1.0f * sign;
-//
-//            if (height<-0.4f) {
-//
-//                trans.setScale(new Vector3d(1.0, .8, 1.0));
-//
-//            }
-//
-//            else {
-//
-//                trans.setScale(new Vector3d(1.0, 1.0, 1.0));
-//
-//            }
-//
-//            trans.setTranslation(new Vector3f(xloc,height,0.0f));
-//
-//            objTrans.setTransform(trans);
+            height += 0.1 * sign;
 
-//        Transform3D rotation = new Transform3D();
-//        Transform3D temp = new Transform3D();
-//          Math.PI / 2
+            if (Math.abs(height *2) >= 1 ) sign = -1.0f * sign;
 
-        trans.rotY(i = i + 0.1);
+            if (height<-0.4f) {
 
-        objTrans.setTransform(trans);
+                trans.setScale(new Vector3d(1.0, .8, 1.0));
+
+            }
+
+            else {
+
+                trans.setScale(new Vector3d(1.0, 1.0, 1.0));
+
+            }
+
+            trans.setTranslation(new Vector3f(xloc,height,0.0f));
+
+            objTrans.setTransform(trans);
+
+        Transform3D rotation = new Transform3D();
+        Transform3D temp = new Transform3D();
+
 
     }
 
-    public static void initPlayer() {
+    public static void main(String[] args) {
 
-        PlayerSphere playerSphere = new PlayerSphere();
+        BouncingBall bb = new BouncingBall();
 
-        MainFrame mf = new MainFrame(playerSphere, 500, 500);
+        MainFrame mf = new MainFrame(bb, 500, 500);
         mf.setTitle("Bouncing Sphere");
         mf.setLocation(300,100);
 

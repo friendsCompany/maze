@@ -56,7 +56,7 @@ public class PlayerSphere extends Applet implements ActionListener {
 
         // Set up the texture map
 
-        TextureLoader loader = new TextureLoader("res/images/Arizona.jpg","LUMINANCE", new Container());
+        TextureLoader loader = new TextureLoader("src/images/Arizona.jpg","LUMINANCE", new Container());
 
         Texture texture = loader.getTexture();
 

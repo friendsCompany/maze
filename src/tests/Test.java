@@ -11,7 +11,7 @@ import javax.media.j3d.*;
 
 import javax.vecmath.*;
 
-import java.awt.Container;
+import java.awt.*;
 
 public class Test {
 
@@ -63,7 +63,11 @@ public class Test {
 
         ap.setMaterial(new Material(red, black, red, black, 1.0f));
 
-
+//        GraphicsConfiguration config = SimpleUniverse.getPreferredConfiguration();
+//
+//        Canvas3D c = new Canvas3D(config);
+//
+//        c.setBackground(Color.CYAN);
 
         // Create a ball to demonstrate textures
 

@@ -16,13 +16,16 @@ import java.applet.Applet;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
 
 
-public class PlayerSphere extends Applet implements ActionListener {
+public class PlayerSphere extends Applet  {
 
     private TransformGroup objTrans;
 
     private Transform3D trans = new Transform3D();
+
+    private Canvas3D c;
 
     private float height=0.0f;
 
@@ -32,7 +35,9 @@ public class PlayerSphere extends Applet implements ActionListener {
 
     private float xloc=0.0f;
 
-    private double i = -1.0;
+    private double x = 0.0;
+
+    private double y = 0.0;
 
 
 
@@ -94,7 +99,7 @@ public class PlayerSphere extends Applet implements ActionListener {
 
         // Create a simple shape leaf node, add it to the scene graph.
 
-        Sphere sphere = new Sphere(0.25f, primflags, ap);
+        Sphere sphere = new Sphere(0.15f, primflags, ap);
 
         objTrans = new TransformGroup();
 
@@ -142,13 +147,74 @@ public class PlayerSphere extends Applet implements ActionListener {
 
         GraphicsConfiguration config = SimpleUniverse.getPreferredConfiguration();
 
-        Canvas3D c = new Canvas3D(config);
+        c = new Canvas3D(config);
 
         add("Center", c);
 
-        timer = new Timer(100,this);
+//        timer = new Timer(100,this);
+//
+//        timer.start();
 
-        timer.start();
+        addKeyListener(new KeyAdapter() {    //обработка событий клавиатуры
+            @Override
+            public void keyPressed(java.awt.event.KeyEvent e) {
+                super.keyPressed(e);
+                if (e.getKeyCode() == java.awt.event.KeyEvent.VK_RIGHT) {
+                    x = x + 0.01;
+                    trans.rotY(x*4);
+                    trans.setTranslation(new Vector3f((float) x, (float)y, 0.0f));
+                    objTrans.setTransform(trans);
+
+                }
+
+            }
+        });
+
+        addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyPressed(java.awt.event.KeyEvent e) {
+                super.keyPressed(e);
+                if (e.getKeyCode() == java.awt.event.KeyEvent.VK_LEFT)
+                {
+                    x = x - 0.01;
+                    trans.rotY(x*4);
+                    trans.setTranslation(new Vector3f((float) x, (float)y, 0.0f));
+                    objTrans.setTransform(trans);
+
+                }
+
+            }
+        });
+
+        addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyPressed(java.awt.event.KeyEvent e) {
+                super.keyPressed(e);
+                if (e.getKeyCode() == java.awt.event.KeyEvent.VK_UP) {
+                    y = y + 0.01;
+                    trans.rotX(-y*4);
+                    trans.setTranslation(new Vector3f((float)x, (float)y, 0.0f));
+                    objTrans.setTransform(trans);
+
+                }
+
+            }
+        });
+
+        addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyPressed(java.awt.event.KeyEvent e) {
+                super.keyPressed(e);
+                if (e.getKeyCode() == java.awt.event.KeyEvent.VK_DOWN)
+                {
+                    y = y - 0.01;
+                    trans.rotX(-y*4);
+                    trans.setTranslation(new Vector3f((float)x, (float)y, 0.0f));
+                    objTrans.setTransform(trans);
+                }
+            }
+        });
+        setFocusable(true);
 
 
         // Create a simple scene and attach it to the virtual universe
@@ -165,7 +231,7 @@ public class PlayerSphere extends Applet implements ActionListener {
 
 
 
-    public void actionPerformed(ActionEvent e ) {
+   /* public void actionPerformed(ActionEvent e ) {
 
 //            height += 0.1 * sign;
 //
@@ -191,19 +257,19 @@ public class PlayerSphere extends Applet implements ActionListener {
 //        Transform3D temp = new Transform3D();
 //          Math.PI / 2
 
-        trans.rotY(i = i + 0.1);
-
+        trans.rotY(i);
+        //trans.setTranslation(new Vector3f((float)i, 0.0f, 0.0f));
         objTrans.setTransform(trans);
-
-    }
+        i = i + 0.1;
+    }*/
 
     public static void initPlayer() {
 
         PlayerSphere playerSphere = new PlayerSphere();
 
-        MainFrame mf = new MainFrame(playerSphere, 500, 500);
+        MainFrame mf = new MainFrame(playerSphere, 900, 500);
         mf.setTitle("Bouncing Sphere");
-        mf.setLocation(300,100);
+        mf.setLocation(200,50);
 
     }
 

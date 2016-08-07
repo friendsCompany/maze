@@ -1,7 +1,7 @@
 package com.friendsCompany.view;
 
-import com.friendsCompany.models.PlayerSphere;
-import com.sun.j3d.utils.applet.MainFrame;
+import com.friendsCompany.models.player.PlayerSphere;
+import com.friendsCompany.models.sounds.*;
 
 import javax.swing.*;
 import java.awt.*;
@@ -82,6 +82,10 @@ class MenuPanel extends JPanel{
 
         public void actionPerformed(ActionEvent event) {
             PlayerSphere.initPlayer();
+
+            Thread myThread = new Thread(new MazeBackgroundSound());
+            myThread.start();
+
         }
     }
 

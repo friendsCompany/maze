@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="Loader3DSsrc">
+    <CLASSES />
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$PROJECT_DIR$/res/libs/Loader3DSsrc.jar!/" />
+    </SOURCES>
+  </library>
+</component>

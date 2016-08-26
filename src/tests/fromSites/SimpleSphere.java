@@ -76,6 +76,7 @@ public class SimpleSphere extends Frame implements ActionListener {
         rotateCube = new Transform3D();
         rotateCube.set(new AxisAngle4d(1.0, 1.0, 0.0, Math.PI ));
         rotationGroup = new TransformGroup(rotateCube);
+        rotationGroup.setCapability(TransformGroup.ALLOW_TRANSFORM_WRITE);
         contentBranch.addChild(rotationGroup);
 
         TextureLoader loader = new TextureLoader("res/images/venmap.jpg","LUMINANCE", new Container());
@@ -138,9 +139,9 @@ public class SimpleSphere extends Frame implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        viewXfm.set(new AxisAngle4d(1.0, 1.0, 0.0, i ));
-        viewXfmGroup.setTransform(viewXfm);
-        i += 0.1;
+        rotateCube.set(new AxisAngle4d(1.0, 1.0, 0.0, i ));
+        rotationGroup.setTransform(rotateCube);
+        i += 0.01;
     }
 
     public static void main(String[] args) {

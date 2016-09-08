@@ -1,64 +1,84 @@
 package com.friendsCompany.models.player;
 
-import com.sun.j3d.utils.applet.MainFrame;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+
+import javax.media.j3d.*;
+import javax.swing.*;
+import javax.vecmath.AxisAngle4d;
+import javax.vecmath.Color3f;
+import javax.vecmath.Point3d;
+import javax.vecmath.Point3f;
+import javax.vecmath.Vector3f;
+
 import com.sun.j3d.utils.geometry.Primitive;
 import com.sun.j3d.utils.geometry.Sphere;
 import com.sun.j3d.utils.image.TextureLoader;
 import com.sun.j3d.utils.universe.SimpleUniverse;
 
-import javax.media.j3d.*;
-import javax.swing.*;
-import javax.vecmath.Color3f;
-import javax.vecmath.Point3d;
-import javax.vecmath.Vector3f;
-import java.applet.Applet;
-import java.awt.*;
-import java.awt.event.KeyAdapter;
+public class PlayerSphere extends Frame implements ActionListener {
+    private GraphicsConfiguration config = SimpleUniverse.getPreferredConfiguration();
+    protected Canvas3D myCanvas3D = new Canvas3D(config);
+    BranchGroup contentBranch;
+    Transform3D rotateCube;
+    TransformGroup viewXfmGroup;
+    Transform3D viewXfm;
+    TransformGroup rotationGroup;
+    private double i = 0.0;
 
+    protected BranchGroup buildViewBranch() {
+        BranchGroup viewBranch = new BranchGroup();
+        viewXfm = new Transform3D();
+        viewXfm.set(new Vector3f(0.0f, 0.0f, 10.0f));
+        viewXfmGroup = new TransformGroup(viewXfm);
+        ViewPlatform myViewPlatform = new ViewPlatform();
+        PhysicalBody myBody = new PhysicalBody();
+        PhysicalEnvironment myEnvironment = new PhysicalEnvironment();
+        viewXfmGroup.addChild(myViewPlatform);
+        viewBranch.addChild(viewXfmGroup);
+        View myView = new View();
+        myView.addCanvas3D(myCanvas3D);
+        myView.attachViewPlatform(myViewPlatform);
+        myView.setPhysicalBody(myBody);
+        myView.setPhysicalEnvironment(myEnvironment);
+        return viewBranch;
+    }
 
-public class PlayerSphere extends Applet  {
+    protected void addLights(BranchGroup b) {
+        // Create a bounds for the lights
+        BoundingSphere bounds = new BoundingSphere(new Point3d(0.0, 0.0, 0.0),
+                100.0);
+        // Set up the global lights
+        Color3f lightColour1 = new Color3f(1.0f, 1.0f, 1.0f);
+        Vector3f lightDir1 = new Vector3f(-1.0f, -1.0f, -1.0f);
+        Color3f lightColour2 = new Color3f(1.0f, 1.0f, 1.0f);
+        Point3f lightPosition2 = new Point3f(3.0f, 3.0f, 3.0f);
+        Point3f lightAtten2 = new Point3f(1.0f, 0.0f, 1.0f);
+        Vector3f lightDir2 = new Vector3f(-1.0f, -1.0f, -1.0f);
+        Color3f ambientColour = new Color3f(0.2f, 0.2f, 0.2f);
+        AmbientLight ambientLight1 = new AmbientLight(ambientColour);
+        ambientLight1.setInfluencingBounds(bounds);
+        DirectionalLight light1 = new DirectionalLight(lightColour1, lightDir1);
+        light1.setInfluencingBounds(bounds);
+        PointLight light2 = new PointLight(lightColour2, lightPosition2,
+                lightAtten2);
+        light2.setInfluencingBounds(bounds);
+        b.addChild(ambientLight1);
+        b.addChild(light1);
+        b.addChild(light2);
+    }
 
-    private TransformGroup objTrans;
+    protected BranchGroup buildContentBranch() {
+        contentBranch = new BranchGroup();
+        rotateCube = new Transform3D();
+        rotateCube.set(new AxisAngle4d(0.0, 0.0, 0.0, Math.PI ));
+        rotationGroup = new TransformGroup(rotateCube);
+        rotationGroup.setCapability(TransformGroup.ALLOW_TRANSFORM_WRITE);
+        contentBranch.addChild(rotationGroup);
 
-    private Transform3D trans = new Transform3D();
-
-    private Canvas3D c;
-
-    private float height=0.0f;
-
-    private float sign = 1.0f; // going up or down
-
-    private Timer timer;
-
-    private float xloc=0.0f;
-
-    private double x = 0.0;
-
-    private double y = 0.0;
-
-
-
-    public BranchGroup createSceneGraph() {
-
-        // Create the root of the branch graph
-
-
-
-        BranchGroup objRoot = new BranchGroup();
-
-        objTrans = new TransformGroup();
-
-        objTrans.setCapability(TransformGroup.ALLOW_TRANSFORM_WRITE);
-
-        objRoot.addChild(objTrans);
-
-        Color3f black = new Color3f(0.0f, 0.0f, 0.0f);
-
-        Color3f white = new Color3f(0.1f, 0.1f, 1.0f);
-
-        // Set up the texture map
-
-        TextureLoader loader = new TextureLoader("res/images/earth_1.jpg","LUMINANCE", new Container());
+        TextureLoader loader = new TextureLoader("res/images/venmap.jpg","LUMINANCE", new Container());
 
         Texture texture = loader.getTexture();
 
@@ -67,12 +87,6 @@ public class PlayerSphere extends Applet  {
         texture.setBoundaryModeT(Texture.WRAP);
 
         //texture.setBoundaryColor( new Color4f( 0.0f, 1.0f, 0.0f, 0.0f ) );
-
-
-
-        // Set up the texture attributes
-
-        //could be REPLACE, BLEND or DECAL instead of MODULATE
 
         TextureAttributes texAttr = new TextureAttributes();
 
@@ -86,191 +100,52 @@ public class PlayerSphere extends Applet  {
 
         //set up the material
 
-       // ap.setMaterial(new Material( white ,black, white, black, 1.0f));
-
-
+        // ap.setMaterial(new Material( white ,black, white, black, 1.0f));
 
         // Create a ball to demonstrate textures
 
         int primflags = Primitive.GENERATE_NORMALS + Primitive.GENERATE_TEXTURE_COORDS;
 
-        // Create a simple shape leaf node, add it to the scene graph.
 
-        Sphere sphere = new Sphere(0.15f, primflags, ap);
-
-        objTrans = new TransformGroup();
-
-        objTrans.setCapability(TransformGroup.ALLOW_TRANSFORM_WRITE);
-
-        Transform3D pos1 = new Transform3D();
-
-        pos1.setTranslation(new Vector3f(0.0f,0.0f,0.0f));
-
-        objTrans.setTransform(pos1);
-
-        objTrans.addChild(sphere);
-
-        objRoot.addChild(objTrans);
-
-        BoundingSphere bounds = new BoundingSphere(new Point3d(0.0,0.0,0.0), 100.0);
-
-        Color3f light1Color = new Color3f(1.0f, 0.0f, 0.5f);
-
-        Vector3f light1Direction = new Vector3f(4.0f, -7.0f, -12.0f);
-
-        DirectionalLight light1 = new DirectionalLight(light1Color, light1Direction);
-
-        light1.setInfluencingBounds(bounds);
-
-        objRoot.addChild(light1);
-
-        // Set up the ambient light
-
-        Color3f ambientColor = new Color3f(1.0f, 1.0f, 1.0f);
-
-        AmbientLight ambientLightNode = new AmbientLight(ambientColor);
-
-        ambientLightNode.setInfluencingBounds(bounds);
-
-        objRoot.addChild(ambientLightNode);
-
-        return objRoot;
-
+        Color3f ambientColour = new Color3f(1.0f, 0.0f, 0.0f);
+        Color3f diffuseColour = new Color3f(1.0f, 0.0f, 0.0f);
+        Color3f specularColour = new Color3f(1.0f, 1.0f, 1.0f);
+        Color3f emissiveColour = new Color3f(0.0f, 0.0f, 0.0f);
+        float shininess = 20.0f;
+        ap.setMaterial(new Material(ambientColour, emissiveColour, diffuseColour, specularColour, shininess));
+        rotationGroup.addChild(new Sphere(2.0f, primflags, 120, ap));
+        addLights(contentBranch);
+        return contentBranch;
     }
 
     public PlayerSphere() {
-
+        VirtualUniverse myUniverse = new VirtualUniverse();
+        Locale myLocale = new Locale(myUniverse);
+        BranchGroup b2 = buildViewBranch();
+        myLocale.addBranchGraph(b2);
+        myLocale.addBranchGraph(buildContentBranch());
+        setTitle("Player");
+        setSize(500, 500);
         setLayout(new BorderLayout());
 
-        GraphicsConfiguration config = SimpleUniverse.getPreferredConfiguration();
+        add("Center", myCanvas3D);
 
-        c = new Canvas3D(config);
+        Timer timer = new Timer(25,this);
+        timer.start();
 
-        add("Center", c);
-
-//        timer = new Timer(100,this);
-//
-//        timer.start();
-
-        // Create a simple scene and attach it to the virtual universe
-
-        moving();
-
-        BranchGroup scene = createSceneGraph();
-
-        SimpleUniverse u = new SimpleUniverse(c);
-
-        u.getViewingPlatform().setNominalViewingTransform();
-
-        u.addBranchGraph(scene);
-
+        setVisible(true);
     }
 
-    private void moving(){
-        addKeyListener(new KeyAdapter() {    //обработка событий клавиатуры
-            @Override
-            public void keyPressed(java.awt.event.KeyEvent e) {
-                super.keyPressed(e);
-                if (e.getKeyCode() == java.awt.event.KeyEvent.VK_RIGHT) {
-                    x = x + 0.01;
-                    trans.rotY(x*4);
-                    trans.setTranslation(new Vector3f((float) x, (float)y, 0.0f));
-                    objTrans.setTransform(trans);
-
-                }
-
-            }
-        });
-
-        addKeyListener(new KeyAdapter() {
-            @Override
-            public void keyPressed(java.awt.event.KeyEvent e) {
-                super.keyPressed(e);
-                if (e.getKeyCode() == java.awt.event.KeyEvent.VK_LEFT)
-                {
-                    x = x - 0.01;
-                    trans.rotY(x*4);
-                    trans.setTranslation(new Vector3f((float) x, (float)y, 0.0f));
-                    objTrans.setTransform(trans);
-
-                }
-
-            }
-        });
-
-        addKeyListener(new KeyAdapter() {
-            @Override
-            public void keyPressed(java.awt.event.KeyEvent e) {
-                super.keyPressed(e);
-                if (e.getKeyCode() == java.awt.event.KeyEvent.VK_UP) {
-                    y = y + 0.01;
-                    trans.rotX(-y*4);
-                    trans.setTranslation(new Vector3f((float)x, (float)y, 0.0f));
-                    objTrans.setTransform(trans);
-
-                }
-
-            }
-        });
-
-        addKeyListener(new KeyAdapter() {
-            @Override
-            public void keyPressed(java.awt.event.KeyEvent e) {
-                super.keyPressed(e);
-                if (e.getKeyCode() == java.awt.event.KeyEvent.VK_DOWN)
-                {
-                    y = y - 0.01;
-                    trans.rotX(-y*4);
-                    trans.setTranslation(new Vector3f((float)x, (float)y, 0.0f));
-                    objTrans.setTransform(trans);
-                }
-            }
-        });
-        setFocusable(true);
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        rotateCube.set(new AxisAngle4d(0.0, 1.0, 0.0, i));
+        rotationGroup.setTransform(rotateCube);
+        i += 0.001;
     }
 
-
-
-   /* public void actionPerformed(ActionEvent e ) {
-
-//            height += 0.1 * sign;
-//
-//            if (Math.abs(height *2) >= 1 ) sign = -1.0f * sign;
-//
-//            if (height<-0.4f) {
-//
-//                trans.setScale(new Vector3d(1.0, .8, 1.0));
-//
-//            }
-//
-//            else {
-//
-//                trans.setScale(new Vector3d(1.0, 1.0, 1.0));
-//
-//            }
-//
-//            trans.setTranslation(new Vector3f(xloc,height,0.0f));
-//
-//            objTrans.setTransform(trans);
-
-//        Transform3D rotation = new Transform3D();
-//        Transform3D temp = new Transform3D();
-//          Math.PI / 2
-
-        trans.rotY(i);
-        //trans.setTranslation(new Vector3f((float)i, 0.0f, 0.0f));
-        objTrans.setTransform(trans);
-        i = i + 0.1;
-    }*/
-
-    public static void initPlayer() {
-
-        PlayerSphere playerSphere = new PlayerSphere();
-
-        MainFrame mf = new MainFrame(playerSphere, 900, 500);
-        mf.setTitle("Bouncing Sphere");
-        mf.setLocation(200,50);
-
+    public static void initPlayer(){
+        PlayerSphere sw = new PlayerSphere();
     }
+
 
 }

@@ -10,7 +10,9 @@ import javax.vecmath.*;
 import com.microcrowd.loader.java3d.max3ds.Loader3DS;
 import com.sun.j3d.loaders.Loader;
 import com.sun.j3d.utils.applet.MainFrame;
+import com.sun.j3d.utils.geometry.Primitive;
 import com.sun.j3d.utils.geometry.Sphere;
+import com.sun.j3d.utils.image.TextureLoader;
 import com.sun.j3d.utils.universe.SimpleUniverse;
 import com.sun.j3d.utils.universe.PlatformGeometry;
 import com.sun.j3d.utils.behaviors.keyboard.*;
@@ -21,7 +23,7 @@ public class Mykeynavbeh extends Applet {
 
     private BranchGroup objRoot;
 
-    private SimpleUniverse universe = null;
+    private VirtualUniverse myUniverse = null;
     private Canvas3D canvas = null;
     //private TransformGroup viewtrans = null;
 
@@ -43,7 +45,6 @@ public class Mykeynavbeh extends Applet {
 
         canvas = new Canvas3D(config);
         add("Center", canvas);
-        universe = new SimpleUniverse(canvas);
 
         addKeyListener(new KeyAdapter() {    //обработка событий клавиатуры
             @Override
@@ -82,7 +83,7 @@ public class Mykeynavbeh extends Applet {
                     //y = y + 0.01;
                     //t3d.rotX(-y * 4);
                     z = z + 0.5;
-                    t3d.setTranslation(new Vector3f((float) x, (float)y, (float)z));
+                    t3d.setTranslation(new Vector3f((float) x, (float) y, (float) z));
                     tg.setTransform(t3d);
 
                 }
@@ -107,59 +108,122 @@ public class Mykeynavbeh extends Applet {
         createSceneGraph();
         createSceneGraphForSphere();
 
-        BranchGroup scene = objRoot;
-        universe.getViewingPlatform().setNominalViewingTransform();
 
-        universe.getViewer().getView().setBackClipDistance(100.0);
+        myUniverse = new VirtualUniverse();
+        Locale myLocale = new Locale(myUniverse);
+        BranchGroup b2 = buildViewBranch();
+        //myLocale.addBranchGraph(b2);
+        myLocale.addBranchGraph(objRoot);
+    }
 
-        universe.addBranchGraph(scene);
+    protected BranchGroup buildViewBranch() {
+        BranchGroup viewBranch = new BranchGroup();
+        Transform3D viewXfm = new Transform3D();
+        viewXfm.set(new Vector3f(0.0f, 0.0f, 10.0f));
+        TransformGroup viewXfmGroup = new TransformGroup(viewXfm);
+        ViewPlatform myViewPlatform = new ViewPlatform();
+        PhysicalBody myBody = new PhysicalBody();
+        PhysicalEnvironment myEnvironment = new PhysicalEnvironment();
+        viewXfmGroup.addChild(myViewPlatform);
+        viewBranch.addChild(viewXfmGroup);
+        View myView = new View();
+        myView.addCanvas3D(canvas);
+        myView.attachViewPlatform(myViewPlatform);
+        myView.setPhysicalBody(myBody);
+        myView.setPhysicalEnvironment(myEnvironment);
+        return viewBranch;
     }
 
     public void createSceneGraphForSphere(){
-        transformGroupSphere = new TransformGroup();
+//        transformGroupSphere = new TransformGroup();
+//
+//        transformGroupSphere.setCapability(TransformGroup.ALLOW_TRANSFORM_WRITE);
+//
+//        objRoot.addChild(transformGroupSphere);
+//
+//
+//        Sphere sphere = new Sphere(0.25f);
+//
+//        transformGroupSphere = new TransformGroup();
+//
+//        transformGroupSphere.setCapability(TransformGroup.ALLOW_TRANSFORM_WRITE);
+//
+//        transform3DSphere = new Transform3D();
+//
+//        transform3DSphere.setTranslation(new Vector3f(0.0f,-0.5f,-1f));
+//
+//        transformGroupSphere.setTransform(transform3DSphere);
+//
+//        transformGroupSphere.addChild(sphere);
+//
+//        objRoot.addChild(transformGroupSphere);
+//
+//        BoundingSphere bounds = new BoundingSphere(new Point3d(0.0,0.0,0.0), 100.0);
+//
+//        Color3f light1Color = new Color3f(1.0f, 0.0f, 0.5f);
+//
+//        Vector3f light1Direction = new Vector3f(4.0f, -7.0f, -12.0f);
+//
+//        DirectionalLight light1 = new DirectionalLight(light1Color, light1Direction);
+//
+//        light1.setInfluencingBounds(bounds);
+//
+//        objRoot.addChild(light1);
+//
+//        // Set up the ambient light
+//
+//        Color3f ambientColor = new Color3f(1.0f, 1.0f, 1.0f);
+//
+//        AmbientLight ambientLightNode = new AmbientLight(ambientColor);
+//
+//        ambientLightNode.setInfluencingBounds(bounds);
+//
+//        objRoot.addChild(ambientLightNode);
 
-        transformGroupSphere.setCapability(TransformGroup.ALLOW_TRANSFORM_WRITE);
-
-        objRoot.addChild(transformGroupSphere);
-
-
-        Sphere sphere = new Sphere(0.25f);
-
-        transformGroupSphere = new TransformGroup();
-
-        transformGroupSphere.setCapability(TransformGroup.ALLOW_TRANSFORM_WRITE);
-
+        objRoot = new BranchGroup();
         transform3DSphere = new Transform3D();
-
-        transform3DSphere.setTranslation(new Vector3f(0.0f,-0.5f,-1f));
-
-        transformGroupSphere.setTransform(transform3DSphere);
-
-        transformGroupSphere.addChild(sphere);
-
+        transform3DSphere.set(new AxisAngle4d(0.0, 0.0, 0.0, Math.PI));
+        transformGroupSphere = new TransformGroup(transform3DSphere);
+        transformGroupSphere.setCapability(TransformGroup.ALLOW_TRANSFORM_WRITE);
         objRoot.addChild(transformGroupSphere);
 
-        BoundingSphere bounds = new BoundingSphere(new Point3d(0.0,0.0,0.0), 100.0);
+        TextureLoader loader = new TextureLoader("res/images/venmap.jpg","LUMINANCE", new Container());
 
-        Color3f light1Color = new Color3f(1.0f, 0.0f, 0.5f);
+        Texture texture = loader.getTexture();
 
-        Vector3f light1Direction = new Vector3f(4.0f, -7.0f, -12.0f);
+        texture.setBoundaryModeS(Texture.WRAP);
 
-        DirectionalLight light1 = new DirectionalLight(light1Color, light1Direction);
+        texture.setBoundaryModeT(Texture.WRAP);
 
-        light1.setInfluencingBounds(bounds);
+        //texture.setBoundaryColor( new Color4f( 0.0f, 1.0f, 0.0f, 0.0f ) );
 
-        objRoot.addChild(light1);
+        TextureAttributes texAttr = new TextureAttributes();
 
-        // Set up the ambient light
+        texAttr.setTextureMode(TextureAttributes.MODULATE);
 
-        Color3f ambientColor = new Color3f(1.0f, 1.0f, 1.0f);
+        Appearance ap = new Appearance();
 
-        AmbientLight ambientLightNode = new AmbientLight(ambientColor);
+        ap.setTexture(texture);
 
-        ambientLightNode.setInfluencingBounds(bounds);
+        ap.setTextureAttributes(texAttr);
 
-        objRoot.addChild(ambientLightNode);
+        //set up the material
+
+        // ap.setMaterial(new Material( white ,black, white, black, 1.0f));
+
+        // Create a ball to demonstrate textures
+
+        int primflags = Primitive.GENERATE_NORMALS + Primitive.GENERATE_TEXTURE_COORDS;
+
+
+        Color3f ambientColour = new Color3f(1.0f, 0.0f, 0.0f);
+        Color3f diffuseColour = new Color3f(1.0f, 0.0f, 0.0f);
+        Color3f specularColour = new Color3f(1.0f, 1.0f, 1.0f);
+        Color3f emissiveColour = new Color3f(0.0f, 0.0f, 0.0f);
+        float shininess = 20.0f;
+        ap.setMaterial(new Material(ambientColour, emissiveColour, diffuseColour, specularColour, shininess));
+        transformGroupSphere.addChild(new Sphere(2.0f, primflags, 120, ap));
+        //addLights(objRoot);
 
     }
 
@@ -176,7 +240,7 @@ public class Mykeynavbeh extends Applet {
 //        keyNavBeh.setSchedulingBounds(bounds);
 //        PlatformGeometry platformGeom = new PlatformGeometry();
 //        platformGeom.addChild(keyNavBeh);
-//        universe.getViewingPlatform().setPlatformGeometry(platformGeom);
+        //myUniverse.getViewingPlatform().setPlatformGeometry(platformGeom);
 
         /////////////////////////////////////////////////////////////////////
 

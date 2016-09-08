@@ -1,6 +1,7 @@
 package com.friendsCompany.view;
 
 import com.friendsCompany.models.player.PlayerSphere;
+import com.friendsCompany.models.player.PlayerSphereOld;
 import com.friendsCompany.models.sounds.*;
 
 import javax.swing.*;
